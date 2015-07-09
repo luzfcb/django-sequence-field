@@ -1,3 +1,5 @@
-from sequence_field.fields import SequenceField
+from __future__ import absolute_import, unicode_literals
 
-__version__ = '0.1'
+from sequence_field.fields import SequenceField  # noqa
+
+default_app_config = 'sequence_field.apps.SequenceFieldConfig'

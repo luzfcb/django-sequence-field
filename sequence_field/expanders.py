@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
 
 # Sequence Field Expanders
 
 import re
 
-class BaseExpander(object):
 
+class BaseExpander(object):
     def __init__(self, template=None, count=None, params={}, value=None):
         self.template = template
         self.count = count
@@ -13,15 +14,15 @@ class BaseExpander(object):
         self.value = value
 
     def setvars(self, template=None, count=None, params={}, value=None):
-        # Parameters take precedence over attributes
+        #  Parameters take precedence over attributes
         template = template if template is not None else self.template
         count = count if count is not None else self.count
-        params = params if len(params)>0 else self.params
+        params = params if len(params) > 0 else self.params
         value = value if value is not None else self.value
-        # Copy current value from template
+        #  Copy current value from template
         if value is None or len(value) == 0:
             value = template
-        return (template, count, params, value, )
+        return (template, count, params, value,)
 
     def expand(self, template=None, count=None, params={}, value=None):
         # Do nothing, just return the value
@@ -32,7 +33,6 @@ class BaseExpander(object):
 
 
 class NumericExpander(BaseExpander):
-
     regexp = r'^(.*)(?P<numeric_placeholder>%N+)(.*)$'
 
     def __init__(self, template=None, count=None, params={}, value=None):
@@ -87,7 +87,6 @@ class NumericExpander(BaseExpander):
 
 
 class ParameterExpander(BaseExpander):
-
     def expand(self, template=None, count=None, params={}, value=None):
         (template, count, params, value) = self.setvars(
             template, count, params, value
@@ -96,9 +95,9 @@ class ParameterExpander(BaseExpander):
 
 
 class TimeExpander(BaseExpander):
-
     def expand(self, template=None, count=None, params={}, value=None):
         import time
+
         (template, count, params, value) = self.setvars(
             template, count, params, value
         )

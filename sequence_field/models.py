@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
 
 from django.db import models
 from django.db.utils import OperationalError
@@ -9,8 +11,8 @@ from sequence_field import settings as sequence_field_settings
 
 # Sequence Field
 
-class Sequence(models.Model):
 
+class Sequence(models.Model):
     key = models.CharField(
         verbose_name=strings.SEQUENCE_KEY,
         max_length=constants.SEQUENCE_KEY_LENGTH,
@@ -25,7 +27,7 @@ class Sequence(models.Model):
     template = models.CharField(
         verbose_name=strings.SEQUENCE_TEMPLATE,
         max_length=constants.SEQUENCE_TEMPLATE_LENGTH,
-        default=sequence_field_settings.SEQUENCE_FIELD_DEFAULT_TEMPLATE 
+        default=sequence_field_settings.SEQUENCE_FIELD_DEFAULT_TEMPLATE
     )
 
     created = models.DateTimeField(
@@ -41,6 +43,7 @@ class Sequence(models.Model):
     class Meta:
         verbose_name = strings.SEQUENCE_MODEL_NAME
         verbose_name_plural = strings.SEQUENCE_MODEL_NAME_PLURAL
+        app_label = 'sequence_field'
 
     def __unicode__(self):
         return self.key
@@ -50,11 +53,11 @@ class Sequence(models.Model):
         if commit:
             self.save()
 
-    def next_value(self, template=None, params=None, 
+    def next_value(self, template=None, params=None,
                    expanders=None, commit=True):
 
         default_template = self.template
-        
+
         default_expanders = \
             sequence_field_settings.SEQUENCE_FIELD_DEFAULT_EXPANDERS
 
@@ -66,14 +69,13 @@ class Sequence(models.Model):
             self.increment()
         return utils.expand(template, count, params, expanders=expanders)
 
-
     @classmethod
     def create_if_missing(cls, key, template=None):
         default_template = \
             sequence_field_settings.SEQUENCE_FIELD_DEFAULT_TEMPLATE
         try:
             (seq, created) = Sequence.objects.get_or_create(key=key)
-            # If a template is provided the first time it gets stored
+            #  If a template is provided the first time it gets stored
             if created and template is not None:
                 seq.template = template
                 seq.save()
@@ -81,10 +83,9 @@ class Sequence(models.Model):
         except OperationalError:
             return None
 
-
     @classmethod
-    def next(cls, key, template=None, params=None, 
-            expanders=None, commit=True):
+    def next(cls, key, template=None, params=None,
+             expanders=None, commit=True):
         seq = Sequence.create_if_missing(key, template)
         return seq.next_value(template, params, expanders, commit)
 

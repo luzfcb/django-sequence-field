@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
+
 from django.contrib import admin
 from sequence_field.models import Sequence
 from sequence_field import settings as sequence_field_settings
 
 # Sequence Field
+
 
 class SequenceAdmin(admin.ModelAdmin):
 
@@ -17,4 +22,3 @@ class SequenceAdmin(admin.ModelAdmin):
 
 if sequence_field_settings.SEQUENCE_FIELD_ADMIN:
     admin.site.register(Sequence, SequenceAdmin)
-

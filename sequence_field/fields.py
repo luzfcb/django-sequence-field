@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
 
 from django.db import models
-from sequence_field.models import Sequence
-from sequence_field.exceptions import SequenceFieldException
-from sequence_field import settings as sequence_field_settings
-from sequence_field import strings
+from . import models as sequence_models
+from .exceptions import SequenceFieldException
+from . import settings as sequence_field_settings
+from . import strings
+
 
 class SequenceField(models.TextField):
     """ Stores sequence values based on templates. """
@@ -24,18 +27,18 @@ class SequenceField(models.TextField):
             self.key = kwargs.pop('key')
         except KeyError:
             raise SequenceFieldException(
-               strings.SEQUENCE_FIELD_MISSING_KEY 
+                strings.SEQUENCE_FIELD_MISSING_KEY
             )
 
         default_pattern = \
             sequence_field_settings.SEQUENCE_FIELD_DEFAULT_PATTERN
         self.pattern = kwargs.pop('pattern', default_pattern)
 
-        default_template = Sequence.get_template_by_key(self.key)
+        default_template = sequence_models.Sequence.get_template_by_key(self.key)
         self.template = kwargs.pop('template', default_template)
 
-        Sequence.create_if_missing(self.key, self.template)
-        
+        sequence_models.Sequence.create_if_missing(self.key, self.template)
+
         default_expanders = \
             sequence_field_settings.SEQUENCE_FIELD_DEFAULT_EXPANDERS
 
@@ -52,9 +55,8 @@ class SequenceField(models.TextField):
         super(SequenceField, self).__init__(*args, **kwargs)
 
     def _next_value(self):
-        seq =  Sequence.create_if_missing(self.key, self.template)
+        seq = sequence_models.Sequence.create_if_missing(self.key, self.template)
         return seq.next_value(self.template, self.params, self.expanders)
-            
 
     def pre_save(self, model_instance, add):
         """
@@ -73,6 +75,7 @@ class SequenceField(models.TextField):
 try:
     # add support for South migrations
     from south.modelsinspector import add_introspection_rules
+
     rules = [
         (
             (SequenceField,),
